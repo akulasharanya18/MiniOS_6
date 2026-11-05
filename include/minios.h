@@ -1,24 +1,27 @@
+
 #ifndef MINIOS_H
 #define MINIOS_H
 
-#include <stddef.h>
-
-#define MINIOS_MAX_INPUT 256
-#define MAX_ARGS 32
-#define QUEUE_SIZE 5
-#define WORKER_COUNT 3
-
+/* Main shell */
+void run_shell(void);
 void show_help(void);
+
+/* Member 2: System monitoring */
 void show_system_info(void);
-void show_processes(void);
 
-int run_program(char **args);
+/* Member 3: Process management */
+void process_demo(void);
 
-void submit_job(const char *job);
+/* Member 4: IPC and jobs */
+void ipc_demo(void);
+void submit_job(void);
+void show_jobs(void);
 
-void show_workers_demo(void);
-void show_race_demo(void);
-void show_sync_demo(void);
-void show_queue_demo(void);
+/* Member 5: Threads and synchronization */
+void start_workers(void);
+void race_demo(void);
+void semaphore_demo(void);
+void producer_consumer_demo(void);
 
 #endif
+
