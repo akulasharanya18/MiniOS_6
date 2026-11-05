@@ -38,7 +38,67 @@ static void *race_worker(void *arg)
     return NULL;
 }
 
-void show_race_demo(void)
+/* Function executed by each worker thread. */
+static void *worker_task(void *arg)
+{
+    int worker_id = *(int *)arg;
+
+    printf("[Worker %d] Started.\n", worker_id);
+
+    usleep(100000);
+
+    printf("[Worker %d] Completed its job.\n", worker_id);
+
+    return NULL;
+}
+
+/* Create and manage three worker threads. */
+void start_workers(void)
+{
+    pthread_t threads[3];
+    int worker_ids[3] = {1, 2, 3};
+    int created = 0;
+
+    printf("\n");
+    printf("========== WORKER MANAGER ==========\n");
+
+    /* Create three worker threads. */
+    for (int i = 0; i < 3; i++)
+    {
+        int result = pthread_create(
+            &threads[i],
+            NULL,
+            worker_task,
+            &worker_ids[i]
+        );
+
+        if (result != 0)
+        {
+            printf("Could not create worker %d. Error: %d\n",
+                   worker_ids[i], result);
+            break;
+        }
+
+        created++;
+    }
+
+    /* Wait for successfully created threads. */
+    for (int i = 0; i < created; i++)
+    {
+        int result = pthread_join(threads[i], NULL);
+
+        if (result != 0)
+        {
+            printf("Could not join worker %d. Error: %d\n",
+                   worker_ids[i], result);
+        }
+    }
+
+    printf("All created worker threads have finished.\n");
+    printf("====================================\n");
+}
+
+void race_demo(void)
 {
     pthread_t thread1;
     pthread_t thread2;
