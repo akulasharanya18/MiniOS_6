@@ -70,3 +70,21 @@ int run_program(char **args)
 
     return 0;
 }
+
+
+void process_demo(void)
+{
+    char *args[] = {"ls", "-l", NULL};
+
+    printf("\n================================\n");
+    printf("       PROCESS MANAGEMENT\n");
+    printf("================================\n");
+
+    printf("\nStarting process demonstration...\n");
+
+    if (run_program(args) == 0) {
+        printf("\nProcess demo completed successfully!\n");
+    } else {
+        printf("\nProcess demo failed.\n");
+    }
+}
