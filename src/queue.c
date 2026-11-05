@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include "minios.h"
-
+#define QUEUE_SIZE 5
 /*
  * Circular buffer.
  */
@@ -113,7 +113,7 @@ static void *consumer(void *arg)
     return NULL;
 }
 
-void show_queue_demo(void)
+void producer_consumer_demo(void)
 {
     pthread_t producer_thread;
     pthread_t consumer_thread;
