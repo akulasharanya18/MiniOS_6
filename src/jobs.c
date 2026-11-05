@@ -1,65 +1,65 @@
-#include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
 
+#include <stdio.h>
+#include <string.h>
 #include "minios.h"
 
-static void *worker_function(void *arg)
+#define MAX_JOBS 10
+#define JOB_NAME_LENGTH 100
+
+static char jobs[MAX_JOBS][JOB_NAME_LENGTH];
+static int job_count = 0;
+
+void submit_job(void)
 {
-    int id = *(int *)arg;
+    char name[JOB_NAME_LENGTH];
 
-    printf(
-        "[Worker %d] Started.\n",
-        id
-    );
+    if (job_count >= MAX_JOBS)
+    {
+        printf("\nJob list is full!\n");
+        return;
+    }
 
-    usleep(100000);
+    printf("\nEnter job name: ");
 
-    printf(
-        "[Worker %d] Completed its job.\n",
-        id
-    );
+    if (fgets(name, sizeof(name), stdin) == NULL)
+    {
+        printf("Unable to read job name.\n");
+        return;
+    }
 
-    return NULL;
+    name[strcspn(name, "\n")] = '\0';
+
+    if (name[0] == '\0')
+    {
+        printf("Job name cannot be empty.\n");
+        return;
+    }
+
+    strcpy(jobs[job_count], name);
+
+    job_count++;
+
+    printf("\nJob submitted successfully!\n");
+    printf("Job ID: %d\n", job_count);
 }
 
-void show_workers_demo(void)
+void show_jobs(void)
 {
-    pthread_t threads[WORKER_COUNT];
+    printf("\n========== JOB MANAGEMENT ==========\n");
 
-    int ids[WORKER_COUNT];
-
-    printf("\n");
-    printf("============= WORKER MANAGER =============\n");
-
-    for (int i = 0; i < WORKER_COUNT; i++)
+    if (job_count == 0)
     {
-        ids[i] = i + 1;
-
-        if (pthread_create(
-                &threads[i],
-                NULL,
-                worker_function,
-                &ids[i]) != 0)
+        printf("No jobs submitted yet.\n");
+    }
+    else
+    {
+        for (int i = 0; i < job_count; i++)
         {
-            perror("pthread_create");
-            return;
+            printf("Job ID: %d | Name: %s | Status: SUBMITTED\n",
+                   i + 1, jobs[i]);
         }
     }
 
-    for (int i = 0; i < WORKER_COUNT; i++)
-    {
-        pthread_join(
-            threads[i],
-            NULL
-        );
-    }
-
-    printf(
-        "All worker threads completed.\n"
-    );
-
-    printf(
-        "===========================================\n\n"
-    );
+    printf("====================================\n");
 }
+
