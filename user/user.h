@@ -2,6 +2,12 @@
 
 struct stat;
 
+struct processinfo {
+  int pid;
+  int ppid;
+  char name[16];
+  int state;
+};
 // system calls
 int fork(void);
 int exit(int) __attribute__((noreturn));
@@ -21,6 +27,7 @@ int mkdir(const char *);
 int chdir(const char *);
 int dup(int);
 int getpid(void);
+int getprocessinfo(struct processinfo *);
 char *sys_sbrk(int, int);
 int pause(int);
 int uptime(void);

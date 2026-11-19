@@ -701,3 +701,39 @@ procdump(void)
     printk("\n");
   }
 }
+int
+getprocessinfo(uint64 addr)
+{
+    struct proc *p;
+    struct processinfo info;
+    int count = 0;
+
+    for (p = proc; p < &proc[NPROC]; p++) {
+        acquire(&wait_lock);
+        acquire(&p->lock);
+
+        if (p->state != UNUSED) {
+            info.pid = p->pid;
+            info.ppid = p->parent ? p->parent->pid : 0;
+            safestrcpy(info.name, p->name, sizeof(info.name));
+            info.state = p->state;
+
+            release(&p->lock);
+            release(&wait_lock);
+
+            if (copyout(myproc()->pagetable,
+            myproc()->sz,
+            addr + count * sizeof(info),
+            (char *)&info,
+            sizeof(info)) < 0)
+                return -1;
+
+            count++;
+        } else {
+            release(&p->lock);
+            release(&wait_lock);
+        }
+    }
+
+    return count;
+}
